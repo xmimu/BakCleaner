@@ -1,0 +1,61 @@
+﻿<Window x:Class="BakCleaner.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BakCleaner"
+        mc:Ignorable="d"
+        Title="BakCleander" Height="450" Width="800">
+    <Grid Background="AliceBlue">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Rectangle Grid.Column="0" Fill="SkyBlue" PreviewDragOver="Rectangle_PreviewDragOver" Drop="Rectangle_Drop" AllowDrop="True"/>
+        <DockPanel Grid.Column="0" Margin="20">
+            <Grid DockPanel.Dock="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="25"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="文件目录：" Grid.Column="0"/>
+                <TextBox x:Name="MainPathText" Margin="5 0 0 0" Grid.Column="1" Background="AliceBlue" Drop="MainPathText_Drop" AllowDrop="True" PreviewDragOver="MainPathText_PreviewDragOver"/>
+                <Button x:Name="PathButton" Margin="1 0 0 0" Grid.Column="2" Content="..." Click="PathButton_Click"/>
+            </Grid>
+            <StackPanel Orientation="Horizontal" Margin="0 10 0 0" DockPanel.Dock="Top">
+                <TextBlock Text="文件后缀："  Width="60"/>
+                <TextBox x:Name="SuffixText" Margin="5 0 0 0" Width="60" Text="*.rpp-bak" IsReadOnly="True" VerticalContentAlignment="Center" Background="AliceBlue"/>
+                <TextBlock Text="保留数量：" Margin="10 0 0 0"  Width="60"/>
+                <TextBox x:Name="MaxNumText" Margin="5 0 0 0" Width="30" Text="10" VerticalContentAlignment="Center" Background="AliceBlue"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0 20 0 0" DockPanel.Dock="Top">
+                <Button x:Name="SearchButton" Content="扫描" Width="80" Click="SearchButton_Click"/>
+            </StackPanel>
+            <Border BorderBrush="#FF3C3C3C" BorderThickness="0.5" VerticalAlignment="Center" Margin="0 20 0 0" DockPanel.Dock="Top"/>
+            <ListBox x:Name="ProjectsListBox" Margin="0 20 0 0" DockPanel.Dock="Top" Background="AliceBlue" PreviewMouseDown="ProjectsListBox_PreviewMouseDown"/>
+        </DockPanel>
+        <!--右边显示区域-->
+        <DockPanel Grid.Column="1">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="20 0">
+                <Button x:Name="DelButton" Content="删除选中文件" Click="DelButton_Click"/>
+            </StackPanel>
+            <DataGrid x:Name="FilesDataGrid" DockPanel.Dock="Top" Margin="0 5 0 0" Background="AliceBlue" IsReadOnly="True" Sorting="FilesDataGrid_Sorting" LoadingRow="FilesDataGrid_LoadingRow">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="文件名" Width="200" Binding="{Binding FileName}"/>
+                    <DataGridTextColumn Header="修改时间" Width="100" Binding="{Binding MTime}"/>
+                    <DataGridTextColumn Header="文件路径" Width="Auto" Binding="{Binding FilePath}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <TextBlock Margin="20 20 20 0" Text="使用说明：" TextWrapping="Wrap" FontSize="20" FontWeight="Bold" DockPanel.Dock="Top"/>
+            <TextBlock x:Name="DescText" Margin="40 10 40 0" Width="350" TextWrapping="Wrap" FontSize="16" DockPanel.Dock="Top" HorizontalAlignment="Left">
+                一、设置处理的文件目录，可拖拽。<LineBreak/><LineBreak/>
+                二、设置保留备份数，默认10个。<LineBreak/><LineBreak/>
+                三、点击扫描，文件多可能略卡。<LineBreak/>左下是项目列表，右边是文件列表。<LineBreak/><LineBreak/>
+                四、点击表格任意一列表头排序，会自动选中备份数以后的数据。<LineBreak/><LineBreak/>
+                五、点击删除选中文件。也可以手动选择然后删除。
+            </TextBlock>
+            <TextBlock Text="—— 梨梨梨" Margin="250 10 20 0" DockPanel.Dock="Top" HorizontalAlignment="Left"/>
+        </DockPanel>
+    </Grid>
+</Window>
