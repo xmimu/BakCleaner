@@ -26,7 +26,6 @@ namespace BakCleaner
     /// </summary>
     public partial class MainWindow : Window
     {
-
         Dictionary<string, List<MyDataItem>> MainDta = new Dictionary<string, List<MyDataItem>>();
 
         public MainWindow()
@@ -41,7 +40,7 @@ namespace BakCleaner
             MainDta = new Dictionary<string, List<MyDataItem>>();
         }
 
-        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        private async void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             Init();
             var folder = MainPathText.Text.Trim();
@@ -51,15 +50,8 @@ namespace BakCleaner
                 return;
             }
 
-            Thread thread = new Thread(new ThreadStart(delegate { 
-                GetData(folder, pattern);
-                Dispatcher.Invoke(DispatcherPriority.Normal, (ThreadStart)delegate () { ShowData(); });
-                
-            }));
-            thread.Start();
-
-            
-
+            await Task.Run(()=>GetData(folder, pattern));
+            ShowData();
         }
 
         private void ShowData()
