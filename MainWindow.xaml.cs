@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -70,9 +71,12 @@ namespace BakCleaner
             
             // 表格
             foreach (var item in MainDta[firstName])
-            {
+            { 
                 FilesDataGrid.Items.Add(item);
             }
+
+            // 排序
+
         }
 
         private void GetData(string folder, string pattern)
@@ -87,7 +91,6 @@ namespace BakCleaner
                 }
                 var projectName = Regex.Replace(fileName, @"\-\d{4}\-\d{2}\-\d{2}_\d{4}$", "");
                 var mTime = File.GetLastWriteTime(item).ToString("d");
-                //projectList.Add(projectName);
 
                 // 项目列表
                 if (!MainDta.ContainsKey(projectName))
