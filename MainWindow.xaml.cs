@@ -38,13 +38,13 @@ namespace BakCleaner
                 return;
             }
 
-            await Task.Run(()=>GetData(folder, pattern));
+            await Task.Run(() => GetData(folder, pattern));
             ShowData();
         }
 
         private void ShowData()
         {
-            if (MainDta.Count == 0) 
+            if (MainDta.Count == 0)
             {
                 MessageBox.Show("文件数据为空！");
                 return;
@@ -60,18 +60,23 @@ namespace BakCleaner
             // 列表
             foreach (var item in MainDta)
             {
-                
+
                 if (item.Value.Count > maxNum)
                 {
                     ProjectsListBox.Items.Add(item.Key);
                 }
             }
             ProjectsListBox.SelectedIndex = 0;
+            if (ProjectsListBox.Items.Count == 0)
+            {
+                MessageBox.Show("没有需要处理的文件！");
+                return;
+            }
             var firstName = ProjectsListBox.Items.GetItemAt(0).ToString();
-            
+
             // 表格
             foreach (var item in MainDta[firstName])
-            { 
+            {
                 FilesDataGrid.Items.Add(item);
             }
 
@@ -81,7 +86,17 @@ namespace BakCleaner
 
         private void GetData(string folder, string pattern)
         {
-            var files = Directory.GetFiles(folder, pattern, SearchOption.AllDirectories);
+            string[] files;
+            try
+            {
+                files = Directory.GetFiles(folder, pattern, SearchOption.AllDirectories);
+            }
+            catch (System.Exception)
+            {
+                MessageBox.Show("文件夹打开错误，也可能没有访问权限！");
+                return;
+            }
+
             foreach (var item in files)
             {
                 var fileName = Path.GetFileNameWithoutExtension(item);
