@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,6 +17,8 @@ namespace BakCleaner
     {
         Dictionary<string, List<MyDataItem>> MainDta = new Dictionary<string, List<MyDataItem>>();
 
+        private bool sorted = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -23,6 +26,8 @@ namespace BakCleaner
 
         private void Init()
         {
+            sorted = false;
+            DelButton.IsEnabled = false;
             ProjectsListBox.Items.Clear();
             FilesDataGrid.Items.Clear();
             MainDta = new Dictionary<string, List<MyDataItem>>();
@@ -30,16 +35,18 @@ namespace BakCleaner
 
         private async void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            Init();
             var folder = MainPathText.Text.Trim();
             var pattern = SuffixText.Text.Trim();
             if (string.IsNullOrEmpty(folder) || string.IsNullOrEmpty(pattern))
             {
+                MessageBox.Show("请输入正确的路径");
                 return;
             }
-
+            SearchButton.IsEnabled = false;
+            Init();
             await Task.Run(() => GetData(folder, pattern));
             ShowData();
+            SearchButton.IsEnabled = true;
         }
 
         private void ShowData()
@@ -66,12 +73,12 @@ namespace BakCleaner
                     ProjectsListBox.Items.Add(item.Key);
                 }
             }
-            ProjectsListBox.SelectedIndex = 0;
             if (ProjectsListBox.Items.Count == 0)
             {
                 MessageBox.Show("没有需要处理的文件！");
                 return;
             }
+            ProjectsListBox.SelectedIndex = 0;
             var firstName = ProjectsListBox.Items.GetItemAt(0).ToString();
 
             // 表格
@@ -79,9 +86,7 @@ namespace BakCleaner
             {
                 FilesDataGrid.Items.Add(item);
             }
-
-            // 排序
-
+            DelButton.IsEnabled = true;
         }
 
         private void GetData(string folder, string pattern)
@@ -117,6 +122,15 @@ namespace BakCleaner
                 var dataItem = new MyDataItem() { FileName = fileName, MTime = mTime, FilePath = item };
                 MainDta[projectName].Add(dataItem);
             }
+
+            // 排序
+            Dictionary<string, List<MyDataItem>> copyData = new Dictionary<string, List<MyDataItem>>();
+            foreach (var item in MainDta)
+            {
+                var newValue = item.Value.OrderByDescending(t => t.FileName);
+                copyData[item.Key] = newValue.ToList();
+            }
+            MainDta = copyData;
         }
 
         struct MyDataItem
@@ -155,6 +169,10 @@ namespace BakCleaner
 
         private void DelButton_Click(object sender, RoutedEventArgs e)
         {
+            if (MainDta.Count == 0)
+            {
+                return;
+            }
             // 获取列表选中项
             var currentName = ProjectsListBox.SelectedItem.ToString();
 
@@ -164,9 +182,11 @@ namespace BakCleaner
             {
                 return;
             }
+            DelButton.IsEnabled = false;
             var result = MessageBox.Show($"已选择 {items.Count} 个文件，确实要删除吗？", "msg", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.No)
             {
+                DelButton.IsEnabled = true;
                 return;
             }
 
@@ -187,9 +207,8 @@ namespace BakCleaner
             {
                 FilesDataGrid.Items.Add(item);
             }
+            DelButton.IsEnabled = true;
         }
-
-        private bool sorted = false;
 
         private void FilesDataGrid_Sorting(object sender, DataGridSortingEventArgs e)
         {

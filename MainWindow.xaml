@@ -38,7 +38,7 @@
         <!--右边显示区域-->
         <DockPanel Grid.Column="1">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="20 0">
-                <Button x:Name="DelButton" Content="删除选中文件" Click="DelButton_Click"/>
+                <Button x:Name="DelButton" Content="删除选中文件" Click="DelButton_Click" IsEnabled="False"/>
             </StackPanel>
             <DataGrid x:Name="FilesDataGrid" DockPanel.Dock="Top" Margin="0 5 0 0" Background="AliceBlue" IsReadOnly="True" Sorting="FilesDataGrid_Sorting" LoadingRow="FilesDataGrid_LoadingRow">
                 <DataGrid.Columns>
@@ -46,6 +46,15 @@
                     <DataGridTextColumn Header="修改时间" Width="100" Binding="{Binding MTime}"/>
                     <DataGridTextColumn Header="文件路径" Width="Auto" Binding="{Binding FilePath}"/>
                 </DataGrid.Columns>
+                <DataGrid.CellStyle>
+                    <Style TargetType="{x:Type DataGridCell}">
+                        <Style.Triggers>
+                            <Trigger Property="DataGridCell.IsSelected" Value="True">
+                                <Setter Property="Background" Value="#FF76BAF3" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.CellStyle>
             </DataGrid>
             <TextBlock Margin="20 20 20 0" Text="使用说明：" TextWrapping="Wrap" FontSize="20" FontWeight="Bold" DockPanel.Dock="Top"/>
             <TextBlock x:Name="DescText" Margin="40 10 40 0" Width="350" TextWrapping="Wrap" FontSize="16" DockPanel.Dock="Top" HorizontalAlignment="Left">
